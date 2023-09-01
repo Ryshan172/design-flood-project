@@ -61,6 +61,26 @@ var geojson = {
 };
 
 
+// Get references to the input fields and the button
+var latitudeInput = document.getElementById("latitude");
+var longitudeInput = document.getElementById("longitude");
+var panButton = document.getElementById("pan-to-coordinate");
+
+// Add a click event listener to the button
+panButton.addEventListener("click", function () {
+  // Get the latitude and longitude values from the input fields
+  var latitude = parseFloat(latitudeInput.value);
+  var longitude = parseFloat(longitudeInput.value);
+
+  // Check if the input values are valid numbers
+  if (!isNaN(latitude) && !isNaN(longitude)) {
+    // Pan the map to the specified coordinates
+    map.setView([latitude, longitude], 16);
+  } else {
+    // Display an error message if the input values are not valid
+    alert("Invalid coordinates. Please enter valid numbers.");
+  }
+});
 
 // Change Styles, Centre, View etc. 
 var map = L.mapbox

@@ -39,7 +39,7 @@ map.on("load", function () {
   // This code will run after the map has finished loading.
 
   // Load the GeoJSON data
-  fetch("wspopu.geojson")
+  fetch("datalayers/wspopu.geojson")
     .then((response) => response.json())
     .then((loadedSecondGeojson) => {
       // Add the GeoJSON data as a source
@@ -68,11 +68,23 @@ map.on("load", function () {
 
         var infoText = "Hello World";
 
+        // Data 
+        const csvData = `Area, mapMean, HRU_Max, HRU_Min, DR5yr, DR10yr\n${feature.properties.Area}, ${feature.properties.mapMean}, ${feature.properties.HRU_Max}, ${feature.properties.HRU_Min}, ${feature.properties.DR5yr}, ${feature.properties.DR10yr}`;
+
+        // Create a data URI for the CSV content
+        const csvDataUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvData);
+
         // Create the HTML content for the popup with a hyperlink
         const popupContent = `
-            <h3>${feature.properties.Area}</h3>
-			      <p>${infoText}</p>
-            <a href="${linkURL}" target="_blank">Visit Website</a>
+            <h2> Region Data </h3>
+            <h3> Area: ${feature.properties.Area}</h3>
+            <h3> mapMean: ${feature.properties.mapMean}</h3>
+            <h3> HRU_Max: ${feature.properties.HRU_Max}</h3>
+            <h3> HRU_Min: ${feature.properties.HRU_Min}</h3>
+            <h3> DR5yr: ${feature.properties.DR5yr}</h3>
+            <h3> DR10yr: ${feature.properties.DR10yr}</h3>
+            
+            <a href="${csvDataUri}" download="data.csv">Download CSV</a>
         `;
 
         new mapboxgl.Popup()
@@ -95,7 +107,7 @@ map.on("load", function () {
     });
 
   // Load the GeoJSON data
-  fetch("rivers.geojson")
+  fetch("datalayers/rivers.geojson")
     .then((response) => response.json())
     .then((loadedRiversGeojson) => {
       // Add the GeoJSON data as a source
@@ -104,7 +116,7 @@ map.on("load", function () {
         data: loadedRiversGeojson,
       });
 
-      // Add a fill layer for the GeoJSON data and set its style
+      // Add a line layer for the GeoJSON data and set its style
       map.addLayer({
         id: "river-geojson-layer",
         type: "line",
@@ -124,8 +136,11 @@ map.on("load", function () {
 
         // Create the HTML content for the popup with a hyperlink
         const popupContent = `
-            <h3>${feature.properties.REACHCODE}</h3>
-			      <p>${infoText}</p>
+            <h2> River Data </h3>
+            <h3> NAME: ${feature.properties.NAME}</h3>
+            <h3> REACHCODE: ${feature.properties.REACHCODE}</h3>
+            <h3> FLOW: ${feature.properties.FLOW}</h3>
+            
         `;
 
         new mapboxgl.Popup()

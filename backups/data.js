@@ -1,16 +1,14 @@
-
 /**
- * Mapbox API Access token added by Ryshan Ramlall 
- * Account owner 
+ * Mapbox API Access token added by Ryshan Ramlall
+ * Account owner
  * Need to pay attention to the pricing if it the amount of user increases substantially
- * Currently only using the Map from the API 
+ * Currently only using the Map from the API
  */
 L.mapbox.accessToken =
-"pk.eyJ1Ijoic3R1cnRpdW0iLCJhIjoiY2tnaHd6cHZjMDAxMzJybG9sM3huOTVpZCJ9.FPujWyjCdiqERPlvNhlU5w";
+  "pk.eyJ1Ijoic3R1cnRpdW0iLCJhIjoiY2tnaHd6cHZjMDAxMzJybG9sM3huOTVpZCJ9.FPujWyjCdiqERPlvNhlU5w";
 
 mapboxgl.accessToken =
-"pk.eyJ1Ijoic3R1cnRpdW0iLCJhIjoiY2tnaHd6cHZjMDAxMzJybG9sM3huOTVpZCJ9.FPujWyjCdiqERPlvNhlU5w";
-
+  "pk.eyJ1Ijoic3R1cnRpdW0iLCJhIjoiY2tnaHd6cHZjMDAxMzJybG9sM3huOTVpZCJ9.FPujWyjCdiqERPlvNhlU5w";
 
 //Navigation controls. For finding directions//
 
@@ -39,14 +37,15 @@ var geojson = {
         routes: "None",
         landmarks: "Schwarma Palace",
         geolocation: "-29.86011111, 31.02419444",
-        image: "https://cdn.24.co.za/files/Cms/General/d/8082/8eedb832797b4ea599400a5dd23804e9.png",
+        image:
+          "https://cdn.24.co.za/files/Cms/General/d/8082/8eedb832797b4ea599400a5dd23804e9.png",
       },
     },
     {
       type: "Feature",
       geometry: {
         type: "Point",
-        coordinates: [31.011273, -29.858300],
+        coordinates: [31.011273, -29.8583],
       },
       properties: {
         title: "Rank no. 95",
@@ -54,12 +53,12 @@ var geojson = {
         routes: "N/A",
         landmarks: "Near English market sign",
         geolocation: "-29.858300, 31.011273",
-        image: "https://cdn.24.co.za/files/Cms/General/d/8082/8eedb832797b4ea599400a5dd23804e9.png",
+        image:
+          "https://cdn.24.co.za/files/Cms/General/d/8082/8eedb832797b4ea599400a5dd23804e9.png",
       },
     },
   ],
 };
-
 
 // Get references to the input fields and the button
 var latitudeInput = document.getElementById("latitude");
@@ -82,7 +81,7 @@ panButton.addEventListener("click", function () {
   }
 });
 
-// Change Styles, Centre, View etc. 
+// Change Styles, Centre, View etc.
 var map = L.mapbox
   .map("map")
   .setView([-29.86011111, 31.02419444], 16)
@@ -93,34 +92,33 @@ var locations = L.mapbox.featureLayer().addTo(map);
 
 locations.setGeoJSON(geojson);
 
-map.on('load', function () {
+map.on("load", function () {
   // This code will run after the map has finished loading.
 
   // Load the GeoJSON data
-  fetch('wspopu.geojson')
-    .then(response => response.json())
-    .then(loadedSecondGeojson => {
+  fetch("wspopu.geojson")
+    .then((response) => response.json())
+    .then((loadedSecondGeojson) => {
       // Add the GeoJSON data as a source
-      map.addSource('second-geojson', {
-        type: 'geojson',
+      map.addSource("second-geojson", {
+        type: "geojson",
         data: loadedSecondGeojson,
       });
 
       // Add a fill layer for the GeoJSON data and set its style
       map.addLayer({
-        id: 'second-geojson-layer',
-        type: 'fill',
-        source: 'second-geojson', // Use the source name defined above
+        id: "second-geojson-layer",
+        type: "fill",
+        source: "second-geojson", // Use the source name defined above
         paint: {
-          'fill-color': 'green', // Set your desired fill color
-          'fill-opacity': 0.7, // Adjust opacity as needed
+          "fill-color": "green", // Set your desired fill color
+          "fill-opacity": 0.7, // Adjust opacity as needed
         },
       });
 
       // You can customize popups or add more layers as needed.
     });
 });
-
 
 function setActive(el) {
   var siblings = listings.getElementsByTagName("div");
@@ -156,8 +154,7 @@ locations.eachLayer(function (locale) {
     popup += '<br /><small class="quiet">' + prop.description + "</small>";
   }
   if (prop.routes) {
-    link.innerHTML +=
-      '<br /><small class="quiet">' + prop.routes + "</small>";
+    link.innerHTML += '<br /><small class="quiet">' + prop.routes + "</small>";
     popup += '<br /><small class="quiet">' + prop.routes + "</small>";
   }
   if (prop.landmarks) {
@@ -206,7 +203,6 @@ locations.eachLayer(function (locale) {
   );
 });
 
-
 // Searchbox functionality
 // Edit to change search parameters
 var searchBox = document.getElementById("search-box");
@@ -240,4 +236,3 @@ searchBox.addEventListener("keyup", function (e) {
     }
   });
 });
-

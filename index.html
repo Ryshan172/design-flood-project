@@ -201,7 +201,21 @@
             <button id="pan-to-coordinate">Pan to Coordinate</button>
         </div>
 
-        <div id="listings" class="listings"></div>
+        <div id="listings" class="listings">
+            <!--Toggle Data Layers-->
+            <div id="layer-toggle" class="mapboxgl-ctrl">
+                <input type="checkbox" id="toggle-stations" checked>
+                <label for="toggle-stations">Stations</label>
+            </div>
+            <div id="layer-toggle" class="mapboxgl-ctrl">
+                <input type="checkbox" id="toggle-rivers" checked>
+                <label for="toggle-rivers">Rivers</label>
+            </div>
+            <div id="layer-toggle" class="mapboxgl-ctrl">
+                <input type="checkbox" id="toggle-region" checked>
+                <label for="toggle-region">Regions</label>
+            </div>
+        </div>
     </div>
     <div id="map" class="map"></div>
     <script src='maindata.js' defer>

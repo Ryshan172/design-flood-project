@@ -1,0 +1,21 @@
+{
+"type": "FeatureCollection",
+"name": "ustations",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "gauge": "U2H011", "lat": -29.646944, "long": 30.259722, "PP_id": 5, "Z": 944.0 }, "geometry": { "type": "Point", "coordinates": [ 30.259714120088347, -29.645553995130705 ] } },
+{ "type": "Feature", "properties": { "gauge": "U8H001", "lat": -30.399167, "long": 30.600556, "PP_id": 13, "Z": 71.0 }, "geometry": { "type": "Point", "coordinates": [ 30.600567374675119, -30.399159682072241 ] } },
+{ "type": "Feature", "properties": { "gauge": "U2H007", "lat": -29.4425, "long": 30.148333, "PP_id": 4, "Z": 1064.0065351600001 }, "geometry": { "type": "Point", "coordinates": [ 30.148609307573388, -29.442498184937421 ] } },
+{ "type": "Feature", "properties": { "gauge": "U1H005", "lat": -29.743611, "long": 29.904722, "PP_id": 1, "Z": 915.31666753900004 }, "geometry": { "type": "Point", "coordinates": [ 29.90526473933155, -29.744175043369488 ] } },
+{ "type": "Feature", "properties": { "gauge": "U2H013", "lat": -29.5125, "long": 30.094167, "PP_id": 7, "Z": 1076.0 }, "geometry": { "type": "Point", "coordinates": [ 30.094442684143345, -29.512514276766044 ] } },
+{ "type": "Feature", "properties": { "gauge": "U2H006", "lat": -29.381667, "long": 30.2775, "PP_id": 3, "Z": 1073.0 }, "geometry": { "type": "Point", "coordinates": [ 30.275369037858489, -29.38083204281671 ] } },
+{ "type": "Feature", "properties": { "gauge": "U7H008", "lat": -30.006667, "long": 30.744722, "PP_id": 12, "Z": 364.0 }, "geometry": { "type": "Point", "coordinates": [ 30.743539787040095, -30.006932989085108 ] } },
+{ "type": "Feature", "properties": { "gauge": "U2H012", "lat": -29.423056, "long": 30.488056, "PP_id": 6, "Z": 628.06836606299998 }, "geometry": { "type": "Point", "coordinates": [ 30.488912161517661, -29.422551109822315 ] } },
+{ "type": "Feature", "properties": { "gauge": "U2H055", "lat": -29.642222, "long": 30.688611, "PP_id": 8, "Z": 264.0 }, "geometry": { "type": "Point", "coordinates": [ 30.676944613799527, -29.619998056427772 ] } },
+{ "type": "Feature", "properties": { "gauge": "U6H003", "lat": -29.803889, "long": 30.515833, "PP_id": 9, "Z": 605.0 }, "geometry": { "type": "Point", "coordinates": [ 30.515827384680819, -29.803335664205029 ] } },
+{ "type": "Feature", "properties": { "gauge": "U7H001", "lat": -29.847222, "long": 30.235278, "PP_id": 10, "Z": 912.0 }, "geometry": { "type": "Point", "coordinates": [ 30.235277777777789, -29.847222222222221 ] } },
+{ "type": "Feature", "properties": { "gauge": "U7H004", "lat": -29.841667, "long": 30.270556, "PP_id": 11, "Z": 1092.83115155 }, "geometry": { "type": "Point", "coordinates": [ 30.270817296266191, -29.841678563971698 ] } },
+{ "type": "Feature", "properties": { "gauge": "U8H003", "lat": -30.273889, "long": 30.695833, "PP_id": 14, "Z": 35.004159913800002 }, "geometry": { "type": "Point", "coordinates": [ 30.683925106220666, -30.268360406184822 ] } },
+{ "type": "Feature", "properties": { "gauge": "U2H002", "lat": -29.650278, "long": 30.799722, "PP_id": 2, "Z": 152.0 }, "geometry": { "type": "Point", "coordinates": [ 30.801210433907965, -29.650834913058283 ] } }
+]
+}

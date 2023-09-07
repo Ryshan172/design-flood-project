@@ -19,6 +19,7 @@ var latitudeInput = document.getElementById("latitude");
 var longitudeInput = document.getElementById("longitude");
 var panButton = document.getElementById("pan-to-coordinate");
 
+
 // Add a click event listener to the button
 panButton.addEventListener("click", function () {
   // Get the latitude and longitude values from the input fields
@@ -34,6 +35,7 @@ panButton.addEventListener("click", function () {
     alert("Invalid coordinates. Please enter valid numbers.");
   }
 });
+
 
 map.on("load", function () {
   // This code will run after the map has finished loading.
@@ -106,6 +108,8 @@ map.on("load", function () {
       // You can customize popups or add more layers as needed.
     });
 
+
+
   // Load the GeoJSON data
   fetch("datalayers/rivers.geojson")
     .then((response) => response.json())
@@ -159,4 +163,117 @@ map.on("load", function () {
         map.getCanvas().style.cursor = "";
       });
     });
+
+  
+  
+  // Load the Stations GeoJSON data
+  fetch("datalayers/ustations.geojson")
+    .then((response) => response.json())
+    .then((loadedStationsGeojson) => {
+      // Add the GeoJSON data as a source
+      map.addSource("stationsgeojson", {
+        type: "geojson",
+        data: loadedStationsGeojson,
+      });
+
+      // Add a line layer for the GeoJSON data and set its style
+      map.addLayer({
+        id: "stations-geojson-layer",
+        type: "circle",
+        source: "stationsgeojson", // Use the source name defined above
+        paint: {
+          "circle-color": "white", // Set your desired circle color
+          "circle-opacity": 0.7, // Adjust opacity as needed
+          "circle-radius": 5, // Set circle radius
+        },
+      });
+
+      // Add a click event listener to show a popup
+      map.on("click", "stations-geojson-layer", function (e) {
+        const feature = e.features[0];
+
+        var infoText = "Hello World";
+
+        // Create the HTML content for the popup with a hyperlink
+        const popupContent = `
+            <h2> Rainfall Stations </h3>
+            <h3> Gauge: ${feature.properties.gauge}</h3>
+        `;
+
+        new mapboxgl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(popupContent)
+          .addTo(map);
+      });
+
+      // Change the cursor to a pointer when hovering over the GeoJSON data
+      map.on("mouseenter", "stations-geojson-layer", function () {
+        map.getCanvas().style.cursor = "pointer";
+      });
+
+      // Change it back to the default cursor when it leaves the GeoJSON data
+      map.on("mouseleave", "stations-geojson-layer", function () {
+        map.getCanvas().style.cursor = "";
+      });
+
+
+      
+
+    });
+
+    document.getElementById("toggle-stations").addEventListener("change", function (e) {
+
+      const checkBox = e.target;
+      const layerId = "stations-geojson-layer"; // Change this layer
+
+      if (checkBox.checked) {
+        // Show the layer
+        map.setLayoutProperty(layerId, "visibility", "visible");
+
+      }
+      else {
+        // Hide the layer
+        map.setLayoutProperty(layerId, "visibility", "none");
+
+      }
+
+    });
+
+	document.getElementById("toggle-rivers").addEventListener("change", function (e) {
+
+        const checkBox = e.target;
+        const layerId = "river-geojson-layer"; // Change this layer
+
+        if (checkBox.checked) {
+          // Show the layer
+          map.setLayoutProperty(layerId, "visibility", "visible");
+
+        }
+        else {
+          // Hide the layer
+          map.setLayoutProperty(layerId, "visibility", "none");
+
+        }
+
+    });
+
+	document.getElementById("toggle-region").addEventListener("change", function (e) {
+
+        const checkBox = e.target;
+        const layerId = "second-geojson-layer"; // Change this layer
+
+        if (checkBox.checked) {
+          // Show the layer
+          map.setLayoutProperty(layerId, "visibility", "visible");
+
+        }
+        else {
+          // Hide the layer
+          map.setLayoutProperty(layerId, "visibility", "none");
+
+        }
+
+    });
+
+    
 });

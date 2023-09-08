@@ -37,6 +37,10 @@ panButton.addEventListener("click", function () {
 });
 
 
+// Empty Array
+var selectedData = [];
+
+
 map.on("load", function () {
   // This code will run after the map has finished loading.
 
@@ -93,6 +97,22 @@ map.on("load", function () {
           .setLngLat(e.lngLat)
           .setHTML(popupContent)
           .addTo(map);
+
+
+        
+        // Create an object to store the selected data
+        const selectedFeature = {
+          Area: feature.properties.Area,
+          mapMean: feature.properties.mapMean,
+          HRU_Max: feature.properties.HRU_Max,
+          HRU_Min: feature.properties.HRU_Min,
+          DR5yr: feature.properties.DR5yr,
+          DR10yr: feature.properties.DR10yr
+        };
+        
+        // Add the selected data to the array
+        selectedData.push(selectedFeature);
+        
       });
 
       // Change the cursor to a pointer when hovering over the GeoJSON data
@@ -221,6 +241,87 @@ map.on("load", function () {
 
     });
 
+
+    // Load the Soils data
+    fetch("datalayers/scssoils.geojson")
+    .then((response) => response.json())
+    .then((loadedSoilsGeojson) => {
+      // Add the GeoJSON data as a source
+      map.addSource("soils-geojson", {
+        type: "geojson",
+        data: loadedSoilsGeojson,
+      });
+
+      // Add a fill layer for the GeoJSON data and set its style
+      map.addLayer({
+        id: "soils-geojson-layer",
+        type: "fill",
+        source: "soils-geojson", // Use the source name defined above
+        paint: {
+          "fill-color": "orange", // Set your desired fill color
+          "fill-opacity": 0.7, // Adjust opacity as needed
+        },
+      });
+
+      // Add a click event listener to show a popup
+      map.on("click", "soils-geojson-layer", function (e) {
+        const feature = e.features[0];
+
+        // Data 
+        const csvData = `SCS_SOIL_C, DEPAHO, DEPBHO, ABRESP, ERODE\n${feature.properties.Area}, ${feature.properties.mapMean}, ${feature.properties.HRU_Max}, ${feature.properties.HRU_Min}, ${feature.properties.DR5yr}, ${feature.properties.DR10yr}`;
+
+        // Create a data URI for the CSV content
+        const csvDataUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvData);
+
+        // Create the HTML content for the popup with a hyperlink
+        const popupContent = `
+            <h2> SCS Soils Data </h3>
+            <h3> SCS_SOIL_C: ${feature.properties.SCS_SOIL_C}</h3>
+            <h3> DEPAHO: ${feature.properties.DEPAHO}</h3>
+            <h3> DEPBHO: ${feature.properties.DEPBHO}</h3>
+            <h3> ABRESP: ${feature.properties.ABRESP}</h3>
+            <h3> ERODE: ${feature.properties.ERODE}</h3>
+            
+            <a href="${csvDataUri}" download="data.csv">Download CSV</a>
+        `;
+
+        new mapboxgl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(popupContent)
+          .addTo(map);
+
+
+        
+        // Create an object to store the selected data
+        const selectedFeature = {
+          SCS_SOIL_C: feature.properties.SCS_SOIL_C,
+          DEPAHO: feature.properties.DEPAHO,
+          HRU_Max: feature.properties.DEPBHO,
+          HRU_Min: feature.properties.ABRESP,
+          ERODE: feature.properties.ERODE
+        };
+        
+        // Add the selected data to the array
+        selectedData.push(selectedFeature);
+        
+      });
+
+      // Change the cursor to a pointer when hovering over the GeoJSON data
+      map.on("mouseenter", "soils-geojson-layer", function () {
+        map.getCanvas().style.cursor = "pointer";
+      });
+
+      // Change it back to the default cursor when it leaves the GeoJSON data
+      map.on("mouseleave", "soils-geojson-layer", function () {
+        map.getCanvas().style.cursor = "";
+      });
+
+      
+    });
+
+
+
+
     document.getElementById("toggle-stations").addEventListener("change", function (e) {
 
       const checkBox = e.target;
@@ -274,6 +375,51 @@ map.on("load", function () {
         }
 
     });
+
+    document.getElementById("toggle-soils").addEventListener("change", function (e) {
+
+      const checkBox = e.target;
+      const layerId = "soils-geojson-layer"; // Change this layer
+
+      if (checkBox.checked) {
+        // Show the layer
+        map.setLayoutProperty(layerId, "visibility", "visible");
+
+      }
+      else {
+        // Hide the layer
+        map.setLayoutProperty(layerId, "visibility", "none");
+
+      }
+
+    });
+
+  
+  function downloadCSV() {
+    const csvHeader = "Area,mapMean,HRU_Max,HRU_Min,DR5yr,DR10yr,DEPAHO\n";
+    const csvRows = selectedData.map((item) => {
+        return `${item.Area},${item.mapMean},${item.HRU_Max},${item.HRU_Min},${item.DR5yr},${item.DR10yr},${item.DEPAHO}`;
+    });
+
+    const csvContent = csvHeader + csvRows.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+
+    // Create a temporary link element and trigger the download
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "selected_data.csv";
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+
+  document.getElementById("download-csv").addEventListener("click", function () {
+    downloadCSV();
+  });
+
 
     
 });

@@ -197,6 +197,10 @@
             align-items: center;
             z-index: 9999; /* Ensure it appears above other elements */
         }
+        .spacer {
+            height: 20px;
+           
+        }
 
 /* Add your spinner styles here */
 
@@ -209,14 +213,12 @@
         <div class="heading">
             <h1>Find Data</h1>
         </div>
-        <div class="search-box">
-            <input type="text" id="search-box" placeholder="Search your location">
-        </div>
         <div id="coordinate-input">
             <input type="text" id="latitude" placeholder="Enter Latitude">
             <input type="text" id="longitude" placeholder="Enter Longitude">
             <button id="pan-to-coordinate">Pan to Coordinate</button>
         </div>
+        <div class="spacer"></div>
 
         <div id="listings" class="listings">
             <!--Toggle Data Layers-->
@@ -236,12 +238,24 @@
                 <input type="checkbox" id="toggle-soils" checked>
                 <label for="toggle-soils">Soils</label>
             </div>
+            <div id="layer-toggle" class="mapboxgl-ctrl">
+                <input type="checkbox" id="toggle-clusters" checked>
+                <label for="toggle-clusters">Clusters</label>
+            </div>
 
             <button id="download-csv">Download Selected Data as CSV</button>
-            <div id="loading">
-                <!-- You can add your loading message or spinner here -->
-                Loading...
-              </div>
+            <div class="spacer"></div>
+            <div>
+                <h1>How to use:</h1>
+                <ul>
+                    <li>Wait for the layers to load</li>
+                    <li>You can toggle layers above</li>
+                    <li>Search for a location using decimal degrees</li>
+                    <li>Click on a location, popup with data will open</li>
+                    <li>Add data in popup to selection</li>
+                    <li>Download combined data as csv</li>
+                </ul>
+            </div>
               
         </div>
     </div>

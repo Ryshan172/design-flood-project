@@ -39,6 +39,9 @@ panButton.addEventListener("click", function () {
 
 // Empty Array
 var selectedData = [];
+var regionCSVData = "Area,mapMean,HRU_Max,HRU_Min,DR5yr,DR10yr\n";
+var riversCSVData = "NAME,REACHCODE,FLOW\n";
+var soilsCSVData = "SCS_SOIL_C,DEPAHO,DEPBHO,ABRESP,ERODE\n";
 
 
 map.on("load", function () {
@@ -76,19 +79,22 @@ map.on("load", function () {
 
         // Data 
         const csvData = `Area, mapMean, HRU_Max, HRU_Min, DR5yr, DR10yr\n${feature.properties.Area}, ${feature.properties.mapMean}, ${feature.properties.HRU_Max}, ${feature.properties.HRU_Min}, ${feature.properties.DR5yr}, ${feature.properties.DR10yr}`;
+        
 
         // Create a data URI for the CSV content
         const csvDataUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvData);
 
         // Create the HTML content for the popup with a hyperlink
         const popupContent = `
-            <h2> Region Data </h3>
+            <h2> Region Data </h2>
             <h3> Area: ${feature.properties.Area}</h3>
             <h3> mapMean: ${feature.properties.mapMean}</h3>
             <h3> HRU_Max: ${feature.properties.HRU_Max}</h3>
             <h3> HRU_Min: ${feature.properties.HRU_Min}</h3>
             <h3> DR5yr: ${feature.properties.DR5yr}</h3>
             <h3> DR10yr: ${feature.properties.DR10yr}</h3>
+            <button id="add-to-region-csv">Add to Region CSV</button>
+            
             
             <a href="${csvDataUri}" download="data.csv">Download CSV</a>
         `;
@@ -112,6 +118,12 @@ map.on("load", function () {
         
         // Add the selected data to the array
         selectedData.push(selectedFeature);
+
+        document.getElementById("add-to-region-csv").addEventListener("click", function () {
+
+          regionCSVData += `${feature.properties.Area},${feature.properties.mapMean},${feature.properties.HRU_Max},${feature.properties.HRU_Min},${feature.properties.DR5yr},${feature.properties.DR10yr}\n`;
+
+        });
         
       });
 
@@ -125,7 +137,7 @@ map.on("load", function () {
         map.getCanvas().style.cursor = "";
       });
 
-      // You can customize popups or add more layers as needed.
+      
     });
 
 
@@ -281,6 +293,7 @@ map.on("load", function () {
             <h3> DEPBHO: ${feature.properties.DEPBHO}</h3>
             <h3> ABRESP: ${feature.properties.ABRESP}</h3>
             <h3> ERODE: ${feature.properties.ERODE}</h3>
+            <button id="add-to-soils-csv">Add to Region CSV</button>
             
             <a href="${csvDataUri}" download="data.csv">Download CSV</a>
         `;
@@ -303,6 +316,13 @@ map.on("load", function () {
         
         // Add the selected data to the array
         selectedData.push(selectedFeature);
+
+        // Add to soils csv
+        document.getElementById("add-to-soils-csv").addEventListener("click", function () {
+
+          soilsCSVData += `${feature.properties.SCS_SOIL_C},${feature.properties.DEPAHO},${feature.properties.DEPBHO},${feature.properties.ABRESP},${feature.properties.ERODE}\n`;
+
+        });
         
       });
 
@@ -415,9 +435,31 @@ map.on("load", function () {
     window.URL.revokeObjectURL(url);
   }
 
+  function downloadCSVB() {
+    // Combine the separate CSV data into one CSV
+    //var combinedCSVData = regionCSVData + riversCSVData + soilsCSVData;
+    var combinedCSVData = regionCSVData + soilsCSVData;
+  
+    const blob = new Blob([combinedCSVData], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+  
+    // Create a temporary link element and trigger the download
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "selected_data.csv";
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+  
+    // Update the display in the corresponding div element
+    updateSelectedDataDisplay("selected-all-data", combinedCSVData);
+  }
+  
+
 
   document.getElementById("download-csv").addEventListener("click", function () {
-    downloadCSV();
+    downloadCSVB();
   });
 
 

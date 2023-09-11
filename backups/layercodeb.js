@@ -42,23 +42,6 @@ var selectedData = [];
 var regionCSVData = "Area,mapMean,HRU_Max,HRU_Min,DR5yr,DR10yr\n";
 var riversCSVData = "NAME,REACHCODE,FLOW\n";
 var soilsCSVData = "SCS_SOIL_C,DEPAHO,DEPBHO,ABRESP,ERODE\n";
-var rainfallCSV = "Gauge\n"
-
-// Show the loading element
-function showLoading() {
-  document.getElementById("loading").style.display = "block";
-}
-
-// Hide the loading element
-function hideLoading() {
-  document.getElementById("loading").style.display = "none";
-}
-
-// Call showLoading() before you start loading your layers
-//showLoading();
-
-// Call hideLoading() when your layers have finished loading
-//hideLoading();
 
 
 map.on("load", function () {
@@ -67,29 +50,39 @@ map.on("load", function () {
   // Load the GeoJSON data
   fetch("datalayers/wspopu.geojson")
     .then((response) => response.json())
-    .then((loadedRegionGeojson) => {
+    .then((loadedSecondGeojson) => {
       // Add the GeoJSON data as a source
-      map.addSource("region-geojson", {
+      map.addSource("second-geojson", {
         type: "geojson",
-        data: loadedRegionGeojson,
+        data: loadedSecondGeojson,
       });
 
       // Add a fill layer for the GeoJSON data and set its style
       map.addLayer({
-        id: "region-geojson-layer",
+        id: "second-geojson-layer",
         type: "fill",
-        source: "region-geojson", // Use the source name defined above
+        source: "second-geojson", // Use the source name defined above
         paint: {
           "fill-color": "green", // Set your desired fill color
           "fill-opacity": 0.7, // Adjust opacity as needed
         },
       });
 
-      map.moveLayer("region-geojson-layer", "stations-geojson-layer");
-
       // Add a click event listener to show a popup
-      map.on("click", "region-geojson-layer", function (e) {
+      map.on("click", "second-geojson-layer", function (e) {
         const feature = e.features[0];
+
+        // Define the URL you want to link to
+        const linkURL = "https://example.com"; // Replace with your actual URL
+
+        var infoText = "Hello World";
+
+        // Data 
+        const csvData = `Area, mapMean, HRU_Max, HRU_Min, DR5yr, DR10yr\n${feature.properties.Area}, ${feature.properties.mapMean}, ${feature.properties.HRU_Max}, ${feature.properties.HRU_Min}, ${feature.properties.DR5yr}, ${feature.properties.DR10yr}`;
+        
+
+        // Create a data URI for the CSV content
+        const csvDataUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvData);
 
         // Create the HTML content for the popup with a hyperlink
         const popupContent = `
@@ -100,8 +93,10 @@ map.on("load", function () {
             <h3> HRU_Min: ${feature.properties.HRU_Min}</h3>
             <h3> DR5yr: ${feature.properties.DR5yr}</h3>
             <h3> DR10yr: ${feature.properties.DR10yr}</h3>
-            <button id="add-to-region-csv">Add Region data to CSV</button>
+            <button id="add-to-region-csv">Add to Region CSV</button>
             
+            
+            <a href="${csvDataUri}" download="data.csv">Download CSV</a>
         `;
 
         new mapboxgl.Popup()
@@ -133,12 +128,12 @@ map.on("load", function () {
       });
 
       // Change the cursor to a pointer when hovering over the GeoJSON data
-      map.on("mouseenter", "region-geojson-layer", function () {
+      map.on("mouseenter", "second-geojson-layer", function () {
         map.getCanvas().style.cursor = "pointer";
       });
 
       // Change it back to the default cursor when it leaves the GeoJSON data
-      map.on("mouseleave", "region-geojson-layer", function () {
+      map.on("mouseleave", "second-geojson-layer", function () {
         map.getCanvas().style.cursor = "";
       });
 
@@ -159,7 +154,7 @@ map.on("load", function () {
 
       // Add a line layer for the GeoJSON data and set its style
       map.addLayer({
-        id: "rivers-geojson-layer",
+        id: "river-geojson-layer",
         type: "line",
         source: "riversgeojson", // Use the source name defined above
         paint: {
@@ -169,10 +164,8 @@ map.on("load", function () {
         },
       });
 
-      map.moveLayer("rivers-geojson-layer", "stations-geojson-layer");
-
       // Add a click event listener to show a popup
-      map.on("click", "rivers-geojson-layer", function (e) {
+      map.on("click", "river-geojson-layer", function (e) {
         const feature = e.features[0];
 
         var infoText = "Hello World";
@@ -183,7 +176,6 @@ map.on("load", function () {
             <h3> NAME: ${feature.properties.NAME}</h3>
             <h3> REACHCODE: ${feature.properties.REACHCODE}</h3>
             <h3> FLOW: ${feature.properties.FLOW}</h3>
-            <button id="add-to-rivers-csv">Add Rivers data to CSV</button>
             
         `;
 
@@ -191,36 +183,15 @@ map.on("load", function () {
           .setLngLat(e.lngLat)
           .setHTML(popupContent)
           .addTo(map);
-
-
-        // Create an object to store the selected data
-        const selectedFeature = {
-          NAME: feature.properties.NAME,
-          REACHCODE: feature.properties.REACHCODE,
-          FLOW: feature.properties.FLOW,
-          
-        };
-        
-        // Add the selected data to the array
-        selectedData.push(selectedFeature);
-
-        // Add to soils csv
-        document.getElementById("add-to-rivers-csv").addEventListener("click", function () {
-
-          riversCSVData += `${feature.properties.NAME},${feature.properties.REACHCODE},${feature.properties.FLOW}\n`;
-
-        });
-
-
       });
 
       // Change the cursor to a pointer when hovering over the GeoJSON data
-      map.on("mouseenter", "rivers-geojson-layer", function () {
+      map.on("mouseenter", "river-geojson-layer", function () {
         map.getCanvas().style.cursor = "pointer";
       });
 
       // Change it back to the default cursor when it leaves the GeoJSON data
-      map.on("mouseleave", "rivers-geojson-layer", function () {
+      map.on("mouseleave", "river-geojson-layer", function () {
         map.getCanvas().style.cursor = "";
       });
     });
@@ -253,36 +224,19 @@ map.on("load", function () {
       map.on("click", "stations-geojson-layer", function (e) {
         const feature = e.features[0];
 
+        var infoText = "Hello World";
+
         // Create the HTML content for the popup with a hyperlink
         const popupContent = `
             <h2> Rainfall Stations </h3>
             <h3> Gauge: ${feature.properties.gauge}</h3>
-            <button id="add-to-rainfall-csv">Add Gauge data to CSV</button>
         `;
 
         new mapboxgl.Popup()
           .setLngLat(e.lngLat)
           .setHTML(popupContent)
           .addTo(map);
-        
-
-        // Create an object to store the selected data
-        const selectedFeature = {
-          Gauge: feature.properties.gauge,
-        };
-        
-        // Add the selected data to the array
-        selectedData.push(selectedFeature);
-
-        // Add to soils csv
-        document.getElementById("add-to-rainfall-csv").addEventListener("click", function () {
-
-          rainfallCSV += `${feature.properties.gauge}\n`;
-
-        });
-        
       });
-
 
       // Change the cursor to a pointer when hovering over the GeoJSON data
       map.on("mouseenter", "stations-geojson-layer", function () {
@@ -294,6 +248,8 @@ map.on("load", function () {
         map.getCanvas().style.cursor = "";
       });
 
+
+      
 
     });
 
@@ -323,6 +279,12 @@ map.on("load", function () {
       map.on("click", "soils-geojson-layer", function (e) {
         const feature = e.features[0];
 
+        // Data 
+        const csvData = `SCS_SOIL_C, DEPAHO, DEPBHO, ABRESP, ERODE\n${feature.properties.SCS_SOIL_C}, ${feature.properties.DEPAHO}, ${feature.properties.DEPBHO}, ${feature.properties.ABRESP}, ${feature.properties.ERODE}`;
+
+        // Create a data URI for the CSV content
+        const csvDataUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvData);
+
         // Create the HTML content for the popup with a hyperlink
         const popupContent = `
             <h2> SCS Soils Data </h3>
@@ -331,14 +293,16 @@ map.on("load", function () {
             <h3> DEPBHO: ${feature.properties.DEPBHO}</h3>
             <h3> ABRESP: ${feature.properties.ABRESP}</h3>
             <h3> ERODE: ${feature.properties.ERODE}</h3>
-            <button id="add-to-soils-csv">Add Soils data to CSV</button>
+            <button id="add-to-soils-csv">Add to Region CSV</button>
             
+            <a href="${csvDataUri}" download="data.csv">Download CSV</a>
         `;
 
         new mapboxgl.Popup()
           .setLngLat(e.lngLat)
           .setHTML(popupContent)
           .addTo(map);
+
 
         
         // Create an object to store the selected data
@@ -399,7 +363,7 @@ map.on("load", function () {
 	document.getElementById("toggle-rivers").addEventListener("change", function (e) {
 
         const checkBox = e.target;
-        const layerId = "rivers-geojson-layer"; // Change this layer
+        const layerId = "river-geojson-layer"; // Change this layer
 
         if (checkBox.checked) {
           // Show the layer
@@ -417,7 +381,7 @@ map.on("load", function () {
 	document.getElementById("toggle-region").addEventListener("change", function (e) {
 
         const checkBox = e.target;
-        const layerId = "region-geojson-layer"; // Change this layer
+        const layerId = "second-geojson-layer"; // Change this layer
 
         if (checkBox.checked) {
           // Show the layer
@@ -450,10 +414,31 @@ map.on("load", function () {
 
     });
 
-
+  
   function downloadCSV() {
+    const csvHeader = "Area,mapMean,HRU_Max,HRU_Min,DR5yr,DR10yr,DEPAHO\n";
+    const csvRows = selectedData.map((item) => {
+        return `${item.Area},${item.mapMean},${item.HRU_Max},${item.HRU_Min},${item.DR5yr},${item.DR10yr},${item.DEPAHO}`;
+    });
+
+    const csvContent = csvHeader + csvRows.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+
+    // Create a temporary link element and trigger the download
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "selected_data.csv";
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  function downloadCSVB() {
     // Combine the separate CSV data into one CSV
-    var combinedCSVData = regionCSVData + riversCSVData + soilsCSVData + rainfallCSV;
+    //var combinedCSVData = regionCSVData + riversCSVData + soilsCSVData;
+    var combinedCSVData = regionCSVData + soilsCSVData;
   
     const blob = new Blob([combinedCSVData], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
@@ -468,13 +453,13 @@ map.on("load", function () {
     window.URL.revokeObjectURL(url);
   
     // Update the display in the corresponding div element
-    // updateSelectedDataDisplay("selected-all-data", combinedCSVData);
+    updateSelectedDataDisplay("selected-all-data", combinedCSVData);
   }
   
 
 
   document.getElementById("download-csv").addEventListener("click", function () {
-    downloadCSV();
+    downloadCSVB();
   });
 
 

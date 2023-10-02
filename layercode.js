@@ -45,6 +45,13 @@ var soilsCSVData = "SCS_SOIL_C,DEPAHO,DEPBHO,ABRESP,ERODE\n";
 var rainfallCSV = "Gauge\n"
 var clusterCSVData = "Cluster\n"
 
+// Loaded or not?
+var loadedRegion = false;
+var loadedSoils = false;
+var loadedStations = false;
+var loadedClusters = false;
+var loadedRivers = false;
+
 // Show the loading element
 function showLoading() {
   document.getElementById("loading").style.display = "block";
@@ -65,8 +72,10 @@ function hideLoading() {
 map.on("load", function () {
   // This code will run after the map has finished loading.
 
-  // Load the GeoJSON data
-  fetch("datalayers/wspopu.geojson")
+  function loadRegionLayer() {
+
+    // Load the GeoJSON data
+    fetch("datalayers/wspopu.geojson")
     .then((response) => response.json())
     .then((loadedRegionGeojson) => {
       // Add the GeoJSON data as a source
@@ -86,7 +95,7 @@ map.on("load", function () {
         },
       });
 
-      map.moveLayer("region-geojson-layer", "stations-geojson-layer");
+      
 
       // Add a click event listener to show a popup
       map.on("click", "region-geojson-layer", function (e) {
@@ -146,10 +155,15 @@ map.on("load", function () {
       
     });
 
+  }
+
+  
 
 
-  // Load the GeoJSON data
-  fetch("datalayers/rivers.geojson")
+  function loadRiversLayer() {
+
+    // Load the GeoJSON data
+    fetch("datalayers/rivers.geojson")
     .then((response) => response.json())
     .then((loadedRiversGeojson) => {
       // Add the GeoJSON data as a source
@@ -170,7 +184,7 @@ map.on("load", function () {
         },
       });
 
-      map.moveLayer("rivers-geojson-layer", "stations-geojson-layer");
+      
 
       // Add a click event listener to show a popup
       map.on("click", "rivers-geojson-layer", function (e) {
@@ -226,10 +240,14 @@ map.on("load", function () {
       });
     });
 
+  }
   
+
   
-  // Load the Stations GeoJSON data
-  fetch("datalayers/ustations.geojson")
+  function loadedRainStations() {
+
+    // Load the Stations GeoJSON data
+    fetch("datalayers/ustations.geojson")
     .then((response) => response.json())
     .then((loadedStationsGeojson) => {
       // Add the GeoJSON data as a source
@@ -298,6 +316,10 @@ map.on("load", function () {
 
     });
 
+  }
+  
+
+  function loadSoilsLayer() {
 
     // Load the Soils data
     fetch("datalayers/scssoils.geojson")
@@ -376,7 +398,10 @@ map.on("load", function () {
       
     });
 
-    
+  }
+  
+  
+  function loadClustersLayer() {
     // Load the Soils data
     fetch("datalayers/clusters.geojson")
     .then((response) => response.json())
@@ -446,7 +471,7 @@ map.on("load", function () {
       
     });
 
-
+  }
 
 
 
@@ -455,7 +480,12 @@ map.on("load", function () {
       const checkBox = e.target;
       const layerId = "stations-geojson-layer"; // Change this layer
 
-      if (checkBox.checked) {
+      if (checkBox.checked && loadedStations == false) {
+        loadedRainStations();
+        loadedStations = true;
+
+      }
+      else if (checkBox.checked && loadedStations == true) {
         // Show the layer
         map.setLayoutProperty(layerId, "visibility", "visible");
 
@@ -473,7 +503,14 @@ map.on("load", function () {
         const checkBox = e.target;
         const layerId = "rivers-geojson-layer"; // Change this layer
 
-        if (checkBox.checked) {
+        if (checkBox.checked && loadedRivers == false) {
+          // Load the layer
+          loadRiversLayer();
+          loadedRivers = true;
+          
+
+        }
+        else if (checkBox.checked && loadedRivers == true) {
           // Show the layer
           map.setLayoutProperty(layerId, "visibility", "visible");
 
@@ -491,10 +528,15 @@ map.on("load", function () {
         const checkBox = e.target;
         const layerId = "region-geojson-layer"; // Change this layer
 
-        if (checkBox.checked) {
+        if (checkBox.checked && loadedRegion == false) {
           // Show the layer
-          map.setLayoutProperty(layerId, "visibility", "visible");
+          //map.setLayoutProperty(layerId, "visibility", "visible");
+          loadRegionLayer();
+          loadedRegion = true;
 
+        }
+        else if (checkBox.checked && loadedRegion == true) {
+          map.setLayoutProperty(layerId, "visibility", "visible");
         }
         else {
           // Hide the layer
@@ -509,10 +551,13 @@ map.on("load", function () {
       const checkBox = e.target;
       const layerId = "soils-geojson-layer"; // Change this layer
 
-      if (checkBox.checked) {
-        // Show the layer
-        map.setLayoutProperty(layerId, "visibility", "visible");
+      if (checkBox.checked && loadedSoils == false) {
+        loadSoilsLayer();
+        loadedSoils = true;
 
+      }
+      else if (checkBox.checked && loadedSoils == true) {
+        map.setLayoutProperty(layerId, "visibility", "visible");
       }
       else {
         // Hide the layer
@@ -527,10 +572,13 @@ map.on("load", function () {
       const checkBox = e.target;
       const layerId = "clusters-geojson-layer"; // Change this layer
 
-      if (checkBox.checked) {
-        // Show the layer
-        map.setLayoutProperty(layerId, "visibility", "visible");
+      if (checkBox.checked && loadedClusters == false) {
+        loadClustersLayer();
+        loadedClusters = true
 
+      }
+      else if (checkBox.checked && loadedClusters == true) {
+        map.setLayoutProperty(layerId, "visibility", "visible");
       }
       else {
         // Hide the layer

@@ -195,16 +195,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 9999; /* Ensure it appears above other elements */
+            z-index: 9999;
+            /* Ensure it appears above other elements */
         }
+
         .spacer {
             height: 20px;
-           
+
         }
 
-/* Add your spinner styles here */
-
-
+        /* Add your spinner styles here */
     </style>
 </head>
 
@@ -223,23 +223,23 @@
         <div id="listings" class="listings">
             <!--Toggle Data Layers-->
             <div id="layer-toggle" class="mapboxgl-ctrl">
-                <input type="checkbox" id="toggle-stations" checked>
+                <input type="checkbox" id="toggle-stations">
                 <label for="toggle-stations">Stations</label>
             </div>
             <div id="layer-toggle" class="mapboxgl-ctrl">
-                <input type="checkbox" id="toggle-rivers" checked>
+                <input type="checkbox" id="toggle-rivers">
                 <label for="toggle-rivers">Rivers</label>
             </div>
             <div id="layer-toggle" class="mapboxgl-ctrl">
-                <input type="checkbox" id="toggle-region" checked>
+                <input type="checkbox" id="toggle-region">
                 <label for="toggle-region">Regions</label>
             </div>
             <div id="layer-toggle" class="mapboxgl-ctrl">
-                <input type="checkbox" id="toggle-soils" checked>
+                <input type="checkbox" id="toggle-soils">
                 <label for="toggle-soils">Soils</label>
             </div>
             <div id="layer-toggle" class="mapboxgl-ctrl">
-                <input type="checkbox" id="toggle-clusters" checked>
+                <input type="checkbox" id="toggle-clusters">
                 <label for="toggle-clusters">Clusters</label>
             </div>
 
@@ -256,7 +256,7 @@
                     <li>Download combined data as csv</li>
                 </ul>
             </div>
-              
+
         </div>
     </div>
     <div id="map" class="map"></div>

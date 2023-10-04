@@ -1,3 +1,7 @@
+// Imports
+import { loadRegionLayer } from './datafunctions/loadRegion.js';
+import { loadRiversLayer } from './datafunctions/loadRivers.js';
+
 mapboxgl.accessToken =
   "pk.eyJ1Ijoic3R1cnRpdW0iLCJhIjoiY2tnaHd6cHZjMDAxMzJybG9sM3huOTVpZCJ9.FPujWyjCdiqERPlvNhlU5w";
 
@@ -69,178 +73,12 @@ function hideLoading() {
 //hideLoading();
 
 
+
+
 map.on("load", function () {
   // This code will run after the map has finished loading.
 
-  function loadRegionLayer() {
-
-    // Load the GeoJSON data
-    fetch("datalayers/wspopu.geojson")
-    .then((response) => response.json())
-    .then((loadedRegionGeojson) => {
-      // Add the GeoJSON data as a source
-      map.addSource("region-geojson", {
-        type: "geojson",
-        data: loadedRegionGeojson,
-      });
-
-      // Add a fill layer for the GeoJSON data and set its style
-      map.addLayer({
-        id: "region-geojson-layer",
-        type: "fill",
-        source: "region-geojson", // Use the source name defined above
-        paint: {
-          "fill-color": "green", // Set your desired fill color
-          "fill-opacity": 0.7, // Adjust opacity as needed
-        },
-      });
-
-      
-
-      // Add a click event listener to show a popup
-      map.on("click", "region-geojson-layer", function (e) {
-        const feature = e.features[0];
-
-        // Create the HTML content for the popup with a hyperlink
-        const popupContent = `
-            <h2> Region Data </h2>
-            <h3> Area: ${feature.properties.Area}</h3>
-            <h3> mapMean: ${feature.properties.mapMean}</h3>
-            <h3> HRU_Max: ${feature.properties.HRU_Max}</h3>
-            <h3> HRU_Min: ${feature.properties.HRU_Min}</h3>
-            <h3> DR5yr: ${feature.properties.DR5yr}</h3>
-            <h3> DR10yr: ${feature.properties.DR10yr}</h3>
-            <button id="add-to-region-csv">Add Region data to CSV</button>
-            
-        `;
-
-        new mapboxgl.Popup()
-          .setLngLat(e.lngLat)
-          .setHTML(popupContent)
-          .addTo(map);
-
-
-        
-        // Create an object to store the selected data
-        const selectedFeature = {
-          Area: feature.properties.Area,
-          mapMean: feature.properties.mapMean,
-          HRU_Max: feature.properties.HRU_Max,
-          HRU_Min: feature.properties.HRU_Min,
-          DR5yr: feature.properties.DR5yr,
-          DR10yr: feature.properties.DR10yr
-        };
-        
-        // Add the selected data to the array
-        selectedData.push(selectedFeature);
-
-        document.getElementById("add-to-region-csv").addEventListener("click", function () {
-
-          regionCSVData += `${feature.properties.Area},${feature.properties.mapMean},${feature.properties.HRU_Max},${feature.properties.HRU_Min},${feature.properties.DR5yr},${feature.properties.DR10yr}\n`;
-
-        });
-        
-      });
-
-      // Change the cursor to a pointer when hovering over the GeoJSON data
-      map.on("mouseenter", "region-geojson-layer", function () {
-        map.getCanvas().style.cursor = "pointer";
-      });
-
-      // Change it back to the default cursor when it leaves the GeoJSON data
-      map.on("mouseleave", "region-geojson-layer", function () {
-        map.getCanvas().style.cursor = "";
-      });
-
-      
-    });
-
-  }
-
   
-
-
-  function loadRiversLayer() {
-
-    // Load the GeoJSON data
-    fetch("datalayers/rivers.geojson")
-    .then((response) => response.json())
-    .then((loadedRiversGeojson) => {
-      // Add the GeoJSON data as a source
-      map.addSource("riversgeojson", {
-        type: "geojson",
-        data: loadedRiversGeojson,
-      });
-
-      // Add a line layer for the GeoJSON data and set its style
-      map.addLayer({
-        id: "rivers-geojson-layer",
-        type: "line",
-        source: "riversgeojson", // Use the source name defined above
-        paint: {
-          "line-color": "blue", // Set your desired line color
-          "line-opacity": 0.7, // Adjust opacity as needed
-          "line-width": 2, // Set line width
-        },
-      });
-
-      
-
-      // Add a click event listener to show a popup
-      map.on("click", "rivers-geojson-layer", function (e) {
-        const feature = e.features[0];
-
-        var infoText = "Hello World";
-
-        // Create the HTML content for the popup with a hyperlink
-        const popupContent = `
-            <h2> River Data </h3>
-            <h3> NAME: ${feature.properties.NAME}</h3>
-            <h3> REACHCODE: ${feature.properties.REACHCODE}</h3>
-            <h3> FLOW: ${feature.properties.FLOW}</h3>
-            <button id="add-to-rivers-csv">Add Rivers data to CSV</button>
-            
-        `;
-
-        new mapboxgl.Popup()
-          .setLngLat(e.lngLat)
-          .setHTML(popupContent)
-          .addTo(map);
-
-
-        // Create an object to store the selected data
-        const selectedFeature = {
-          NAME: feature.properties.NAME,
-          REACHCODE: feature.properties.REACHCODE,
-          FLOW: feature.properties.FLOW,
-          
-        };
-        
-        // Add the selected data to the array
-        selectedData.push(selectedFeature);
-
-        // Add to soils csv
-        document.getElementById("add-to-rivers-csv").addEventListener("click", function () {
-
-          riversCSVData += `${feature.properties.NAME},${feature.properties.REACHCODE},${feature.properties.FLOW}\n`;
-
-        });
-
-
-      });
-
-      // Change the cursor to a pointer when hovering over the GeoJSON data
-      map.on("mouseenter", "rivers-geojson-layer", function () {
-        map.getCanvas().style.cursor = "pointer";
-      });
-
-      // Change it back to the default cursor when it leaves the GeoJSON data
-      map.on("mouseleave", "rivers-geojson-layer", function () {
-        map.getCanvas().style.cursor = "";
-      });
-    });
-
-  }
   
 
   
@@ -510,7 +348,7 @@ map.on("load", function () {
 
         if (checkBox.checked && loadedRivers == false) {
           // Load the layer
-          loadRiversLayer();
+          loadRiversLayer(map, selectedData, riversCSVData);
           loadedRivers = true;
           
 
@@ -536,7 +374,7 @@ map.on("load", function () {
         if (checkBox.checked && loadedRegion == false) {
           // Show the layer
           //map.setLayoutProperty(layerId, "visibility", "visible");
-          loadRegionLayer();
+          loadRegionLayer(map, selectedData, regionCSVData);
           loadedRegion = true;
 
         }
